@@ -1,4 +1,56 @@
-## Welcome to GitHub Pages
+## Making Sense of Code Scanning with CodeQL
+
+It's no secret that GitHub's code scanning tool, CodeQL, can help organizations of any size develop software faster and more securely, all without needing to leave GitHub.com, and there's no shortage of awesome content explaining what this looks like from the developer's perspective using the tool (or the GitHub Org Owner's). However, something that I've struggled with is figuring out a simple yet thorough explanation of the mechanisms behind _how_ CodeQL delivers its code scanning alerts (beyond statements like "it queries a relational database representation of the repo's code, which gets generated with every set trigger event). So that's why I'm writing this, and if it's something you'd like to learn, keep reading. 
+
+### The Basic Steps of CodeQL
+1. Preparing the code by creating a CodeQL database
+2. Running CodeQL queries against the database
+3. Interpreting/presenting the query results
+
+For my deep-dive here, I'm going to tackle each one of these in turn, starting with the first. Remember that in the context of Code Scanning, the running of this entire process is defined in the workflow YAML file inside your .github/workflows directory in your repo. (Explain how the workflow file basically works, and reference that the whole code scanning process can also be done in a repo from the CLI if you have the right packages included)
+
+### 1. Preparing the Code by Creating a CodeQL Database
+
+The most basic explanation you'll find regarding this step is that to create a database, CodeQL first extracts a single relational representation of each source file in the codebase. But what does that entail?
+
+#### The Extraction Process
+
+The conversion from source code to a querable database is done by a special program called an extractor, and to perform this process on any given language, an extractor built specifically for that language is needed. As I'll explain later, the ambiguities present in certain programming languages (such as Ruby) make it harder to write extractors, as one of the key functions of an extractor is to _parse_ the code, which is more difficult for more ambiguous languages.
+
+Beyond which language is being used, there are two different scenarios for the extraction process, both covered below.
+
+##### Extraction for Compiled Languages
+
+Extraction in this case works by monitoring the normal build process. Each time a compiler is invoked to process a source file, a copy of that file is made, and all relevant information about the source code is collected. This includes syntactic data about the abstract syntax tree and semantic data about name binding and type information.
+
+##### Extraction for Non-Compiled Languages:
+
+For non-compiled languages, the extractor runs directly on the source code, resolving dependencies to give an accurate representation of the codebase.
+
+In both scenarios, a parse tree is created to represent the source code. What exactly does that mean though?
+
+It all starts with 
+
+(use a super basic example representing some source code, show how it's turned into a parse tree and then a db)
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 You can use the [editor on GitHub](https://github.com/nomdal/understandingcodeql/edit/main/README.md) to maintain and preview the content for your website in Markdown files.
 
