@@ -96,7 +96,7 @@ Every language has unique quirks, so each one CodeQL supports has its own schema
 
 How easy or difficult this translation from parse tree to relational database is depends a lot on how similar those two structures look. For some languages, we defined our database schema to closely match the structure (and naming scheme) of the tree produced by the parser. That is, there’s a high level of correspondence between the parser’s node names and the database’s table names. For those languages, an extractor’s job is fairly simple. For other languages, where we perhaps decided that the tree produced by the parser didn’t map nicely to our ideal database schema, we have to do more work to convert from one to the other.
 
-At this point, we've created a relational database representation of our code, and thus, are done with Step 1 and can move on to Step 2.
+After extraction, all the data required for analysis (relational data, copied source files, and a language-specific database schema, which specifies the mutual relations in the data) is imported into a single directory, known as a CodeQL database. At this point, we've created a relational database representation of our code, and thus, are done with Step 1 and can move on to Step 2.
 
 ### 2. Running CodeQL queries against the database
 
@@ -121,7 +121,51 @@ select arg
 
 ```MethodCall``` and ```Expr``` are classes that wrap the database tables, providing a high-level, object-oriented interface, with helpful predicates like ```getMethodName()``` and ```getAnArgument()```.
 
+You can read more about writing queries for Ruby in CodeQL [here](https://codeql.github.com/docs/codeql-language-guides/basic-query-for-ruby-code/), or running them on the CodeQL CLI [here](https://codeql.github.com/docs/codeql-cli/using-custom-queries-with-the-codeql-cli/).
+
 ##### But what queries will return potential vulnerabilities in our code?
 
-Whether we're talking about CodeQL or some other vendor's solution, this is the question at the heart of code scanning.
+Whether we're talking about CodeQL or some other vendor's solution, this is the question at the heart of code scanning. In addition to custom queries that you can write yourself to find vulnerabilities, there are different packs of pre-written queries created by the GitHub Security Lab that you can run. When you follow the setup for the CodeQL automated workflow (discussed at the start of this post), default querues are used for whatever languages it detects you’re using, and these defaults are specifically chosen for their hit rate on high severity alerts.
+
+Though it might be a little out of date depending on when you're reading this, you can find the default queries by looking at this repo:
+https://github.com/advanced-security/codeql-queries/ and going in the directory for whatever language you want to see. Check out the corresponding README for more information. It lists how many queries are under the different packs/suites, and you can find the specific queries called for each in the json file ```queries.json```, which references them in the main CodeQL repo, here: https://github.com/github/codeql (again, look under the corresponding language directories).
+
+The majority of the queries in these main packs/suites are built to check for major CWEs ([Common Weakness Enumeration](https://en.wikipedia.org/wiki/Common_Weakness_Enumeration)), which is a categorization system for software weaknesses and vulnerabilities maintained by the National Cybersecurity FFRDC (which is federally funded part of the Mitre Corporation). The NFC ranks the CWEs (which have numbers to identity them, such as CWE-787, for an out of bounds write) by severity, and the default CodeQL queries largely correspond to the most dangerous known software weaknesses.
+
+##### Here's an example of how CodeQL checks for a known vulnerability, **CWE-079**
+
+[CWE-079](https://cwe.mitre.org/data/definitions/79.html) is #2 on CWE's [Top 25 Most Dangerous Software Weaknesses for 2021](https://cwe.mitre.org/top25/archive/2021/2021_cwe_top25.html). It represents a **cross-site scripting vulnerability** (also known as **XSS**), meaning that the code doesn't properly neutralize inputs during web page generation. As you can see on the vulnerability's [entry](https://cwe.mitre.org/data/definitions/79.html) on the cwe.mitre.org website, there are three main types of XSS:
+
+1. Reflected XSS (or Non-Persistent)
+2. Stored XSS (or Persistent)
+3. DOM-Based XSS
+
+If you look at the [default CodeQL queries for Ruby](https://github.com/advanced-security/codeql-queries/blob/main/ruby/queries.json), you'll see both **1.** and **2.** are checked for (**#3** is really only a js vulnerability, so you won't find it in the Ruby default queries, though you will in the js ones). You can then find these actual queries in the https://github.com/github/codeq1 repo, [here](https://github.com/github/codeql/tree/main/ruby/ql/src/queries/security/cwe-079).
+
+Notice that each query has two corresponding files: 
+
+1) .ql query file, representing the actual executable query
+2) .qhelp file, which contains detailed information about the purpose and use of that query
+
+For this example, let's look at the ```StoredXSS.ql``` file, which is our query written in QL to run against the CodeQL database we generated in Step 1 and check for this particular vulnerability.
+
+```
+import ruby
+import codeql.ruby.security.StoredXSSQuery
+import codeql.ruby.DataFlow
+import DataFlow::PathGraph
+
+from StoredXSS::Configuration config, DataFlow::PathNode source, DataFlow::PathNode sink
+where config.hasFlowPath(source, sink)
+select sink.getNode(), source, sink, "Cross-site scripting vulnerability due to $@",
+  source.getNode(), "stored value"
+```
+
+What's happening: 
+
+
+
+
+
+
 
