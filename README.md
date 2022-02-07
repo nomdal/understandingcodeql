@@ -68,33 +68,33 @@ Finally, the _string_literals_ table lets us associate the literal text value (_
 
 So now that we've defined our schema, let's manually populate a matching database with rows for our simple program:
 
-```expressions```
+EXPRESSIONS
 
 | id    |   kind            |
-| ----- | -----------       |
+| ----- | -----             |
 | 100   | 1 (call)          |
 | 101   | 2 (string literal)|
 | 102   | 2 (string literal |
 
-```calls```
+CALLS
 
-| expr_id    |   name            |
-| ----- | -----------       |
-| 100   | "puts"         |
+|expr_id| name  |
+| ----- | ----- |
+| 100   | "puts"|
 
-```call_arguments```
+CALL_ARGUMENTS
 
-| call_id	    |   arg_id	            | arg_index |
-| ----- | -----------       | ------ |
-| 100   | 101       |  0 |
-| 100   | 102       |  1 |
+| call_id	  |   arg_id  | arg_index |
+| ------    | ------    | ------    |
+| 100       | 101       |  0        |
+| 100       | 102       |  1.       |
 
-```string_literals```
+STRING_LITERALS
 
-| expr_id	    |   val	            | 
-| ----- | -----------       | 
-| 101   | "Hello"       | 
-| 102   | "Ahoy"       |
+| expr_id	 |   val	     | 
+| -----    | ----------- | 
+| 101      | "Hello"     | 
+| 102      | "Ahoy"      |
 
 Every language has unique quirks, so each one CodeQL supports has its own schema, perfectly tuned to match that language’s syntax. Whereas our example schema has only two kinds of expression (calls and string literals), the [JavaScript](https://github.com/github/codeql/blob/d00196f6be5282ca4fa02dadb74a8c9675d96eec/javascript/ql/lib/semmlecode.javascript.dbscheme) and [Ruby](https://github.com/github/codeql/blob/d00196f6be5282ca4fa02dadb74a8c9675d96eec/ruby/ql/lib/ruby.dbscheme) schemas that GitHub defines for CodeQL, for example, both define over 100 kinds of expression. Those schemas were written manually, refined and expanded over the years as we make improvements and add support for new language features.
 
