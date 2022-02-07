@@ -102,7 +102,7 @@ How easy or difficult this translation from parse tree to relational database is
 
 After extraction, all the data required for analysis (relational data, copied source files, and a language-specific database schema, which specifies the mutual relations in the data) is imported into a single directory, known as a CodeQL database. At this point, we've created a relational database representation of our code, and thus, are done with Step 1 and can move on to Step 2.
 
-## 2. Running CodeQL queries against the database
+## 2. Running QL queries against the CodeQL database
 
 Now, suppose the above example was a SQL database, and we wanted to write a query to find all the expressions that are arguments in calls to the puts method. It might look like this:
 
