@@ -92,7 +92,15 @@ So now that we've defined our schema, let's manually populate a matching databas
 | 101   | "Hello"       | 
 | 102   | "Ahoy"       |
 
-Now, suppose this was a SQL database, and we wanted to write a query to find all the expressions that are arguments in calls to the puts method. It might look like this:
+Every language has unique quirks, so each one CodeQL supports has its own schema, perfectly tuned to match that language’s syntax. Whereas our example schema has only two kinds of expression (calls and string literals), the [JavaScript](https://github.com/github/codeql/blob/d00196f6be5282ca4fa02dadb74a8c9675d96eec/javascript/ql/lib/semmlecode.javascript.dbscheme) and [Ruby](https://github.com/github/codeql/blob/d00196f6be5282ca4fa02dadb74a8c9675d96eec/ruby/ql/lib/ruby.dbscheme) schemas that GitHub defines for CodeQL, for example, both define over 100 kinds of expression. Those schemas were written manually, refined and expanded over the years as we make improvements and add support for new language features.
+
+How easy or difficult this translation from parse tree to relational database is depends a lot on how similar those two structures look. For some languages, we defined our database schema to closely match the structure (and naming scheme) of the tree produced by the parser. That is, there’s a high level of correspondence between the parser’s node names and the database’s table names. For those languages, an extractor’s job is fairly simple. For other languages, where we perhaps decided that the tree produced by the parser didn’t map nicely to our ideal database schema, we have to do more work to convert from one to the other.
+
+At this point, we've created a relational database representation of our code, and thus, are done with Step 1 and can move on to Step 2.
+
+### 2. Running CodeQL queries against the database
+
+Now, suppose the above example was a SQL database, and we wanted to write a query to find all the expressions that are arguments in calls to the puts method. It might look like this:
 
 ```
 SELECT call_arguments.arg_id
@@ -100,6 +108,7 @@ FROM call_arguments
 INNER JOIN calls ON calls.expr_id = call_arguments.call_id
 WHERE calls.name = "puts";
 ```
+
 In practice, however, we don’t use SQL. Instead, CodeQL queries are written in the QL language and evaluated using our custom database engine. QL is an object-oriented, declarative logic-programming language that is superficially similar to SQL but based on [Datalog](https://en.wikipedia.org/wiki/Datalog). Here’s what the same query might look like in QL:
 
 ```
@@ -112,11 +121,7 @@ select arg
 
 ```MethodCall``` and ```Expr``` are classes that wrap the database tables, providing a high-level, object-oriented interface, with helpful predicates like ```getMethodName()``` and ```getAnArgument()```.
 
-Every language has unique quirks, so each one CodeQL supports has its own schema, perfectly tuned to match that language’s syntax. Whereas our example schema has only two kinds of expression (calls and string literals), the [JavaScript](https://github.com/github/codeql/blob/d00196f6be5282ca4fa02dadb74a8c9675d96eec/javascript/ql/lib/semmlecode.javascript.dbscheme) and [Ruby](https://github.com/github/codeql/blob/d00196f6be5282ca4fa02dadb74a8c9675d96eec/ruby/ql/lib/ruby.dbscheme) schemas that GitHub defines for CodeQL, for example, both define over 100 kinds of expression. Those schemas were written manually, refined and expanded over the years as we make improvements and add support for new language features.
+##### But what queries will return potential vulnerabilities in our code?
 
-How easy or difficult this translation from parse tree to relational database is depends a lot on how similar those two structures look. For some languages, we defined our database schema to closely match the structure (and naming scheme) of the tree produced by the parser. That is, there’s a high level of correspondence between the parser’s node names and the database’s table names. For those languages, an extractor’s job is fairly simple. For other languages, where we perhaps decided that the tree produced by the parser didn’t map nicely to our ideal database schema, we have to do more work to convert from one to the other.
-
-At this point, we've created a relational database representation of our code, and thus, are done with Step 1 and can move on to Step 2.
-
-### 2. Running CodeQL queries against the database
+Whether we're talking about CodeQL or some other vendor's solution, this is the question at the heart of code scanning.
 
