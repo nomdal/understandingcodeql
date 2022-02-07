@@ -136,7 +136,7 @@ https://github.com/advanced-security/codeql-queries/ and going in the directory 
 
 The majority of the queries in these main packs/suites are built to check for major CWEs ([Common Weakness Enumeration](https://en.wikipedia.org/wiki/Common_Weakness_Enumeration)), which is a categorization system for software weaknesses and vulnerabilities maintained by the National Cybersecurity FFRDC (which is federally funded part of the Mitre Corporation). The NFC ranks the CWEs (which have numbers to identity them, such as CWE-787, for an out of bounds write) by severity, and the default CodeQL queries largely correspond to the most dangerous known software weaknesses.
 
-##### Here's an example of how CodeQL checks for a known vulnerability, **CWE-079**
+#### Here's an example of how CodeQL checks for a known vulnerability, **CWE-079**
 
 [CWE-079](https://cwe.mitre.org/data/definitions/79.html) is #2 on CWE's [Top 25 Most Dangerous Software Weaknesses for 2021](https://cwe.mitre.org/top25/archive/2021/2021_cwe_top25.html). It represents a **cross-site scripting vulnerability** (also known as **XSS**), meaning that the code doesn't properly neutralize inputs during web page generation. As you can see on the vulnerability's [entry](https://cwe.mitre.org/data/definitions/79.html) on the cwe.mitre.org website, there are three main types of XSS:
 
@@ -179,7 +179,7 @@ select sink.getNode(), source, sink, "Cross-site scripting vulnerability due to 
   source.getNode(), "stored value"
 ```
 
-##### What's happening:
+#### What's happening:
 The main work of this query is done by the taint tracking library (import codeql.ruby.security.StoredXSSQuery), which has functions to answer the question of which sources of data can influence a particular set of sinks (which are classes or functions designed to receive incoming events from another object or function). The above query extends TaintTracking::Configuration (the class defined in [codeql.ruby.security.StoredXSSQuery](https://github.com/github/codeql/blob/main/ruby/ql/lib/codeql/ruby/security/StoredXSSQuery.qll)), which itself uses some sources/sinks defined in the XSS.qll [file](https://github.com/github/codeql/blob/main/ruby/ql/lib/codeql/ruby/security/XSS.qll).
 
 Basically, the query uses the config, source, and sinks for this Ruby program, referenced using the taint tracking library on the CodeQL database built from the source code, and it checks whether there is a stored value with a flow path from the source (where it is first input) to the sink (where it is read back into the application and included in dynamic content), which would be a potential XSS vulnerability. The heavy lifting is done in that StoredXSS file, which is part of the taint tracking library, and the above query reveals whether or not that XSS vulnerability exists and displays the answer as its result.
