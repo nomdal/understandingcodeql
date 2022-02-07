@@ -169,6 +169,7 @@ For this example, let's look at the ```StoredXSS.ql``` file, which is our query 
  *       external/cwe/cwe-079
  *       external/cwe/cwe-116
  */
+ 
 import ruby
 import codeql.ruby.security.StoredXSSQuery
 import codeql.ruby.DataFlow
