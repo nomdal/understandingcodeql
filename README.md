@@ -1,4 +1,4 @@
-## Making Sense of Code Scanning with CodeQL
+# Making Sense of Code Scanning with CodeQL
 
 It's no secret that GitHub's code scanning tool, CodeQL, can help organizations of any size develop software faster and more securely, all without needing to leave GitHub.com, and there's no shortage of awesome content explaining what this looks like from the developer or organization owner's perspectives using the tool. However, something that I've struggled with is figuring out a simple yet thorough explanation of the mechanisms behind _how_ CodeQL delivers its code scanning alerts (something even deeper than statements like "it queries a relational database representation of the repo's code, which gets generated with every trigger event"). So that's why I'm writing this, and if it's something you'd like to learn, Keep Reading.
 
@@ -17,21 +17,21 @@ Clicking on the "Configure CodeQL alerts" button will create a YAML file in your
 
 But regardless of how its setup and triggered, lets figure out how the code scanning process actually works:
 
-### 1. Preparing the Code by Creating a CodeQL Database
+## 1. Preparing the Code by Creating a CodeQL Database
 
 The most basic explanation you'll find regarding this step is that to create a database, CodeQL first extracts a single relational representation of each source file in the codebase. But what does that entail?
 
-#### The Extraction Process
+### The Extraction Process
 
 The conversion from source code to a queryable database is done by a special program called an extractor, and to perform this process on any given language, an extractor built specifically for that language is needed. As I'll explain later, the ambiguities present in certain programming languages (such as Ruby) make it harder to write extractors, as one of the key functions of an extractor is to _parse_ the code, which is more difficult for more ambiguous languages.
 
 Beyond which language is being used, there are two different scenarios for the extraction process, both covered below:
 
-##### Extraction for Compiled Languages
+#### Extraction for Compiled Languages
 
 Extraction in this case works by monitoring the normal build process. Each time a compiler is invoked to process a source file, a copy of that file is made, and all relevant information about the source code is collected. This includes syntactic data about the abstract syntax tree and semantic data about name binding and type information, which we'll cover in greater detail shortly.
 
-##### Extraction for Non-Compiled Languages
+#### Extraction for Non-Compiled Languages
 
 For non-compiled languages, the extractor runs directly on the source code, resolving dependencies to give an accurate representation of the codebase.
 
@@ -98,7 +98,7 @@ How easy or difficult this translation from parse tree to relational database is
 
 After extraction, all the data required for analysis (relational data, copied source files, and a language-specific database schema, which specifies the mutual relations in the data) is imported into a single directory, known as a CodeQL database. At this point, we've created a relational database representation of our code, and thus, are done with Step 1 and can move on to Step 2.
 
-### 2. Running CodeQL queries against the database
+## 2. Running CodeQL queries against the database
 
 Now, suppose the above example was a SQL database, and we wanted to write a query to find all the expressions that are arguments in calls to the puts method. It might look like this:
 
@@ -123,7 +123,7 @@ select arg
 
 You can read more about writing queries for Ruby in CodeQL [here](https://codeql.github.com/docs/codeql-language-guides/basic-query-for-ruby-code/), or running them on the CodeQL CLI [here](https://codeql.github.com/docs/codeql-cli/using-custom-queries-with-the-codeql-cli/).
 
-##### But what queries will return potential vulnerabilities in our code?
+#### But what queries will return potential vulnerabilities in our code?
 
 Whether we're talking about CodeQL or some other vendor's solution, this is the question at the heart of code scanning. In addition to custom queries that you can write yourself to find vulnerabilities, there are different packs of pre-written queries created by the GitHub Security Lab that you can run. When you follow the setup for the CodeQL automated workflow (discussed at the start of this post), default querues are used for whatever languages it detects you’re using, and these defaults are specifically chosen for their hit rate on high severity alerts.
 
@@ -146,10 +146,24 @@ Notice that each query has two corresponding files:
 
 1) .ql query file, representing the actual executable query
 2) .qhelp file, which contains detailed information about the purpose and use of that query
+NOTE: there are also .qll files, which represent query libraries, are are found higher up in the directory
 
 For this example, let's look at the ```StoredXSS.ql``` file, which is our query written in QL to run against the CodeQL database we generated in Step 1 and check for this particular vulnerability.
 
 ```
+/**
+ * @name Stored cross-site scripting
+ * @description Using uncontrolled stored values in HTML allows for
+ *              a stored cross-site scripting vulnerability.
+ * @kind path-problem
+ * @problem.severity error
+ * @security-severity 6.1
+ * @precision high
+ * @id rb/stored-xss
+ * @tags security
+ *       external/cwe/cwe-079
+ *       external/cwe/cwe-116
+ */
 import ruby
 import codeql.ruby.security.StoredXSSQuery
 import codeql.ruby.DataFlow
@@ -161,7 +175,22 @@ select sink.getNode(), source, sink, "Cross-site scripting vulnerability due to 
   source.getNode(), "stored value"
 ```
 
-What's happening: 
+##### What's happening:
+The main work of this query is done by the taint tracking library (import codeql.ruby.security.StoredXSSQuery), which has functions to answer the question of which sources of data can influence a particular set of sinks (which are classes or functions designed to receive incoming events from another object or function). The above query extends TaintTracking::Configuration (the class defined in [codeql.ruby.security.StoredXSSQuery](https://github.com/github/codeql/blob/main/ruby/ql/lib/codeql/ruby/security/StoredXSSQuery.qll)), which itself uses some sources/sinks defined in the XSS.qll [file](https://github.com/github/codeql/blob/main/ruby/ql/lib/codeql/ruby/security/XSS.qll).
+
+Basically, the query uses the config, source, and sinks for this Ruby program, referenced using the taint tracking library on the CodeQL database built from the source code, and it checks whether there is a stored value with a flow path from the source (where it is first input) to the sink (where it is read back into the application and included in dynamic content), which would be a potential XSS vulnerability. The heavy lifting is done in that StoredXSS file, which is part of the taint tracking library, and the above query reveals whether or not that XSS vulnerability exists and displays the answer as its result.
+
+Many of the security queries GitHub publishes are basically a set of sources and sinks and a data flow configuration!
+
+## 3. Interpreting/presenting the query results
+
+At this point, we have covered how the CodeQL database is generated from source code and then how queries are run against it. According to the CodeQL [documentation](https://codeql.github.com/docs/codeql-overview/about-codeql/), we need the results converted into a form that is more meaningful in the context of the source code--alerts that highlights the potential issues that the queries may have found in the code. Queries contain metadata properties (see the top of the query used in the previous section) that indicate how the results should be interpreted. For instance, some queries display a simple message at a single location in the code. Others display a series of locations that represent steps along a data-flow or control-flow path, along with a message explaining the significance of the result. Queries that don’t have metadata are not interpreted—their results are output as a table and not displayed in the source code.
+
+Following interpretation, results are output for code review and triaging. In CodeQL for Visual Studio Code, interpreted query results are automatically displayed in the source code. Results generated by the CodeQL CLI can be output into a number of different formats for use with different tools. If code scanning is activated within a repo on GitHub, the results are automatically formatted and integrated in the _Security_ tab, under _Code scanning alerts_, with the metadata (which is defined as comments at the top of the queries) formatted within individual alerts.
+
+## Conclusion
+
+And thus, the three step process comes to and end. The beauty of it lies in the scale: we're able to run huge quantities of these queries during development--with every commit and pull request even, allowing us to catch a massive array of potential vulnerabilities far to the left in the software development lifecycle.
 
 
 
