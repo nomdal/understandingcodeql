@@ -1,13 +1,18 @@
 ## Making Sense of Code Scanning with CodeQL
 
-It's no secret that GitHub's code scanning tool, CodeQL, can help organizations of any size develop software faster and more securely, all without needing to leave GitHub.com, and there's no shortage of awesome content explaining what this looks like from the developer's perspective using the tool (or the GitHub Org Owner's). However, something that I've struggled with is figuring out a simple yet thorough explanation of the mechanisms behind _how_ CodeQL delivers its code scanning alerts (beyond statements like "it queries a relational database representation of the repo's code, which gets generated with every set trigger event). So that's why I'm writing this, and if it's something you'd like to learn, keep reading. 
+It's no secret that GitHub's code scanning tool, CodeQL, can help organizations of any size develop software faster and more securely, all without needing to leave GitHub.com, and there's no shortage of awesome content explaining what this looks like from the developer or organization owner's perspectives using the tool. However, something that I've struggled with is figuring out a simple yet thorough explanation of the mechanisms behind _how_ CodeQL delivers its code scanning alerts (something even deeper than statements like "it queries a relational database representation of the repo's code, which gets generated with every trigger event"). So that's why I'm writing this, and if it's something you'd like to learn, Keep Reading.
+
+One final note: my focus here is on _how_ CodeQL works, not why it's valuable. To better understand the value propisition of using code scanning to help SHIFT LEFT, then you can read more about it [here](https://github.blog/2020-08-27-secure-at-every-step-putting-devsecops-into-practice-with-code-scanning/).
 
 ### The Basic Steps of CodeQL
 1. Preparing the code by creating a CodeQL database
 2. Running CodeQL queries against the database
 3. Interpreting/presenting the query results
 
-For my deep-dive here, I'm going to tackle each one of these in turn, starting with the first. Remember that in the context of Code Scanning, the running of this entire process is defined in the workflow YAML file inside your .github/workflows directory in your repo. (Explain how the workflow file basically works, and reference that the whole code scanning process can also be done in a repo from the CLI if you have the right packages included)
+For my deep-dive here, I'm going to tackle each one of these in turn, starting with the first. Remember that in the context of code scanning, the running of this entire process is defined in the workflow YAML file inside your .github/workflows directory in your repo. The setup to get started with this has been automated within GitHub and occurs when you first turn on code scanning under the "Security" tab of your repo. See here:
+
+
+(Explain how the workflow file basically works, and reference that the whole code scanning process can also be done in a repo from the CLI if you have the right packages included)
 
 ### 1. Preparing the Code by Creating a CodeQL Database
 
