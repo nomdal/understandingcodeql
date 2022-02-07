@@ -144,7 +144,7 @@ The majority of the queries in these main packs/suites are built to check for ma
 2. Stored XSS (or Persistent)
 3. DOM-Based XSS
 
-If you look at the [default CodeQL queries for Ruby](https://github.com/advanced-security/codeql-queries/blob/main/ruby/queries.json), you'll see both **1.** and **2.** are checked for (**#3** is really only a js vulnerability, so you won't find it in the Ruby default queries, though you will in the js ones). You can then find these actual queries in the https://github.com/github/codeq1 repo, [here](https://github.com/github/codeql/tree/main/ruby/ql/src/queries/security/cwe-079).
+If you look at the [default CodeQL queries for Ruby](https://github.com/advanced-security/codeql-queries/blob/main/ruby/queries.json), you'll see both **1.** and **2.** are checked for (**3.** is really only a js vulnerability, so you won't find it in the Ruby default queries, though you will in the js ones). You can then find these actual queries in the https://github.com/github/codeq1 repo, [here](https://github.com/github/codeql/tree/main/ruby/ql/src/queries/security/cwe-079).
 
 Notice that each query has two corresponding files: 
 
