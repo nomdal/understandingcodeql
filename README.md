@@ -11,6 +11,8 @@ One final note: my focus here is on _how_ CodeQL works, not why it's valuable. T
 
 For my deep-dive here, I'm going to tackle each one of these in turn, starting with the first. Remember that in the context of code scanning, the running of this entire process is defined in the workflow YAML file inside your .github/workflows directory in your repo. The setup to get started with this has been automated within GitHub and occurs when you first turn on code scanning under the "Security" tab of your repo. See here:
 
+![alt text](Conf_CodeQL.png "Title")
+
 
 (Explain how the workflow file basically works, and reference that the whole code scanning process can also be done in a repo from the CLI if you have the right packages included)
 
