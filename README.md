@@ -148,8 +148,8 @@ If you look at the [default CodeQL queries for Ruby](https://github.com/advanced
 
 Notice that each query has two corresponding files: 
 
-1) .ql query file, representing the actual executable query
-2) .qhelp file, which contains detailed information about the purpose and use of that query
+1. .ql query file, representing the actual executable query
+2. .qhelp file, which contains detailed information about the purpose and use of that query
 NOTE: there are also .qll files, which represent query libraries, are are found higher up in the directory
 
 For this example, let's look at the ```StoredXSS.ql``` file, which is our query written in QL to run against the CodeQL database we generated in Step 1 and check for this particular vulnerability.
