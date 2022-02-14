@@ -131,12 +131,12 @@ You can read more about writing queries for Ruby in CodeQL [here](https://codeql
 
 #### But what queries will return potential vulnerabilities in our code?
 
-Whether we're talking about CodeQL or some other vendor's solution, this is the question at the heart of code scanning. In addition to custom queries that you can write yourself to find vulnerabilities, there are different packs of pre-written queries created by the [GitHub Security Lab](https://securitylab.github.com/) that you can run. When you follow the setup for the CodeQL automated workflow (discussed at the start of this post), default querues are used for whatever languages it detects you’re using, and these defaults are specifically chosen for their hit rate on high severity alerts.
+Whether we're talking about CodeQL or some other vendor's solution, this is the question at the heart of code scanning. In addition to custom queries that you can write yourself to find vulnerabilities, there are different packs of pre-written queries created by the [GitHub Security Lab](https://securitylab.github.com/) that you can run. When you follow the setup for the CodeQL automated workflow (discussed at the start of this post), default queries are used for whatever languages it detects in your code, and these defaults are specifically chosen for their hit rate on high severity alerts.
 
 Though it might be a little out of date depending on when you're reading this, you can find the default queries by looking at this repo:
 https://github.com/advanced-security/codeql-queries/ and going in the directory for whatever language you want to see. Check out the corresponding README for more information. It lists how many queries are under the different packs/suites, and you can find the specific queries called for each in the json file ```queries.json```, which references them in the main CodeQL repo, here: https://github.com/github/codeql (again, look under the corresponding language directories).
 
-The majority of the queries in these main packs/suites are built to check for major CWEs ([Common Weakness Enumeration](https://en.wikipedia.org/wiki/Common_Weakness_Enumeration)), which is a categorization system for software weaknesses and vulnerabilities maintained by the National Cybersecurity FFRDC (which is federally funded part of the Mitre Corporation). The NFC ranks the CWEs (which have numbers to identity them, such as CWE-787, for an out of bounds write) by severity, and the default CodeQL queries largely correspond to the most dangerous known software weaknesses.
+The majority of the queries in these main packs/suites are built to check for major CWEs ([Common Weakness Enumeration](https://en.wikipedia.org/wiki/Common_Weakness_Enumeration)), which is a categorization system for software weaknesses and vulnerabilities maintained by the National Cybersecurity FFRDC (which is a federally funded entity part of the Mitre Corporation). The NFC ranks the CWEs (which have numbers to identity them, such as CWE-787, for an "out of bounds write") by severity, and the default CodeQL queries largely correspond to the most dangerous known software weaknesses.
 
 #### Here's an example of how CodeQL checks for a known vulnerability, **CWE-079**
 
@@ -153,7 +153,7 @@ Notice that each query has two corresponding files:
 1. ql query file, representing the actual executable query
 2. qhelp file, which contains detailed information about the purpose and use of that query
 
-NOTE: there are also .qll files, which represent query libraries, are are found higher up in the directory
+NOTE: there are also .qll files, which represent query libraries and are found higher up in the directory, providing logic to be called by the ql files
 
 For this example, let's look at the ```StoredXSS.ql``` file, which is our query written in QL to run against the CodeQL database we generated in Step 1 and check for this particular vulnerability.
 
