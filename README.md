@@ -51,7 +51,7 @@ Remember, it's the role of our extractor to follow along with our code to build 
 
 While the above example is quite simple, you can imagine how if other functions were ultimately called by the root of the tree, they would then generate their own branches beneath them, and we'd follow it to the bottom until the entire codebase has been parsed into a single tree. It is at this point that we need to convert this parse tree object into a relational database for us to query, the main job of the extractor.
 
-Going back to the diagram above, I can attempt to convert it to relational form. To do that, I must first define a schema for the database, which is a bit more art than science.
+Going back to the diagram above, I can attempt to convert it to relational form. To do that, I must first define a [schema](https://database.guide/what-is-a-database-schema/) for the database, which is a bit more art than science.
 
 ```
 expressions(id: int, kind: int)
