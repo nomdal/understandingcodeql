@@ -1,21 +1,21 @@
 # Making Sense of Code Scanning with CodeQL
 
-It's no secret that GitHub's code scanning tool, CodeQL, can help organizations of any size develop software faster and more securely, all without needing to leave GitHub.com, and there's no shortage of awesome content explaining what this looks like from the developer or organization owner's perspectives using the tool. However, something that I've struggled with is figuring out a simple yet thorough explanation of the mechanisms behind _how_ CodeQL delivers its code scanning alerts (something even deeper than statements like "it queries a relational database representation of the repo's code, which gets generated with every trigger event"). So that's why I'm writing this, and if it's something you'd like to learn, Keep Reading.
+It's no secret that GitHub's code scanning tool, CodeQL, can help organizations of any size develop software faster and more securely, all without needing to leave GitHub.com, and there's no shortage of awesome content explaining what this looks like from the developer or organization owner's perspectives using the tool. However, something that I've struggled with is figuring out a simple yet thorough explanation of the mechanisms behind _how_ CodeQL delivers its code scanning alerts (something even deeper than statements like "it queries a relational database representation of the repo's code, which gets generated with every trigger event"). So that's why I'm writing this, and if it's something you'd like to learn, **Keep Reading**.
 
-One final note: my focus here is on _how_ CodeQL works, not why it's valuable. To better understand the value propisition of using code scanning to help SHIFT LEFT, then you can read more about it [here](https://github.blog/2020-08-27-secure-at-every-step-putting-devsecops-into-practice-with-code-scanning/).
+One final note: my focus here is on _how_ CodeQL works, not why it's valuable. To better understand the value propisition of using code scanning to help SHIFT LEFT, you can read more about it [here](https://github.blog/2020-08-27-secure-at-every-step-putting-devsecops-into-practice-with-code-scanning/).
 
 ### The Basic Steps of CodeQL
 1. Preparing the code by creating a CodeQL database
 2. Running CodeQL queries against the database
 3. Interpreting/presenting the query results
 
-For my deep-dive here, I'm going to tackle each one of these in turn, starting with the first. Remember that in the context of code scanning with CodeQL, the running of this  process is defined in the workflow YAML file inside your .github/workflows directory in your repo. The setup to get started with this has been automated on GitHub and occurs when you first turn on code scanning under the "Security" tab of your repo. See here:
+For my deep-dive here, I'm going to tackle each one of these in turn, starting with the first. Remember that in the context of code scanning with CodeQL, the running of this  process is defined in the workflow YAML file inside your ```.github/workflows``` directory in your repo. The setup to get started with this has been automated on GitHub and occurs when you first turn on code scanning under the "Security" tab of your repo. See here:
 
 ![alt text](Conf_CodeQL.png "Configuring CodeQL in a Repo")
 
-Clicking on the "Configure CodeQL alerts" button will create a YAML file in your workflow directory that looks something like [this](https://github.com/nomdal/continuous-integration-circle/blob/nomdal-patch-1/.github/workflows/codeql-analysis.yml). It is fully customizable, but starts off with some defaults, like executing the scan whenever there's a pull request or push against the main branch of the repo, as well as on a scheduled timetable. Bear in mind, however, that this is only the automation to execute the code scanning, and that the process itself can also be executed manually from the CLI on a repo if you have the right packages included (read more about how to do so [here](https://codeql.github.com/docs/codeql-cli/getting-started-with-the-codeql-cli/)).
+Clicking on the "Configure CodeQL alerts" button will create a YAML file in your workflow directory that looks something like [this](https://github.com/nomdal/continuous-integration-circle/blob/nomdal-patch-1/.github/workflows/codeql-analysis.yml). It is fully customizable but starts off with some defaults, like executing the scan whenever there's a pull request or push against the main branch of the repo, as well as on a scheduled timetable. Bear in mind, however, that this is only the automation to execute the code scanning, and that the process itself can also be executed manually from the CLI on a repo if you have the right packages included (read more about how to do so [here](https://codeql.github.com/docs/codeql-cli/getting-started-with-the-codeql-cli/)).
 
-But regardless of how its setup and triggered, lets figure out how the code scanning process actually works:
+But regardless of how it's setup and triggered, lets figure out how the code scanning process actually works:
 
 ## 1. Preparing the Code by Creating a CodeQL Database
 
