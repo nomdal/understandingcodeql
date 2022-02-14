@@ -37,6 +37,8 @@ Beyond which language is being used, there are two different scenarios for the e
 
 In both scenarios, a parse tree is ultimately created to represent the source code, and this tree is then transformed into a relational database to run queries against. What exactly does that mean, though? Let's use an example from the [GitHub Blog](https://github.blog/2022-02-01-code-scanning-and-ruby-turning-source-code-into-a-queryable-database/).
 
+#### Extraction Example
+
 Whatever program we're looking at, there must be some function that kicks the whole thing off, and it's at this location that our parse tree takes root. Let's use this basic Ruby function as a hypothetical starting point:
 
 ```puts("Hello", "Ahoy")```
