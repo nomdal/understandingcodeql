@@ -70,7 +70,7 @@ Finally, the _string_literals_ table lets us associate the literal text value (_
 
 So now that we've defined our schema, let's manually populate a matching database with rows for our simple program:
 
-EXPRESSIONS
+**EXPRESSIONS**
 
 | id    |   kind            |
 | ----- | -----             |
@@ -78,20 +78,20 @@ EXPRESSIONS
 | 101   | 2 (string literal)|
 | 102   | 2 (string literal |
 
-CALLS
+**CALLS**
 
 |expr_id| name  |
 | ----- | ----- |
 | 100   | "puts"|
 
-CALL_ARGUMENTS
+**CALL_ARGUMENTS**
 
 | call_id	  |   arg_id  | arg_index |
 | ------    | ------    | ------    |
 | 100       | 101       |  0        |
 | 100       | 102       |  1.       |
 
-STRING_LITERALS
+**STRING_LITERALS**
 
 | expr_id	 |   val	     | 
 | -----    | ----------- | 
