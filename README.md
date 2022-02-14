@@ -15,7 +15,7 @@ For my deep-dive here, I'm going to tackle each one of these in turn, starting w
 
 Clicking on the "Configure CodeQL alerts" button will create a YAML file in your workflow directory that looks something like [this](https://github.com/nomdal/continuous-integration-circle/blob/nomdal-patch-1/.github/workflows/codeql-analysis.yml). It is fully customizable but starts off with some defaults, like executing the scan whenever there's a pull request or push against the main branch of the repo, as well as on a scheduled timetable. Bear in mind, however, that this is only the automation to execute the code scanning, and that the process itself can also be executed manually from the CLI on a repo if you have the right packages included (read more about how to do so [here](https://codeql.github.com/docs/codeql-cli/getting-started-with-the-codeql-cli/)).
 
-But regardless of how it's setup and triggered, lets figure out how the code scanning process actually works:
+But regardless of how it's setup and triggered, let's figure out how the code scanning process actually works:
 
 ## 1. Preparing the Code by Creating a CodeQL Database
 
