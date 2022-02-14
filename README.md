@@ -29,11 +29,11 @@ Beyond which language is being used, there are two different scenarios for the e
 
 #### Extraction for Compiled Languages
 
-Extraction in this case works by monitoring the normal build process. Each time a compiler is invoked to process a source file, a copy of that file is made, and all relevant information about the source code is collected. This includes syntactic data about the abstract syntax tree and semantic data about name binding and type information, which we'll cover in greater detail shortly.
+- Extraction in this case works by monitoring the normal build process. Each time a compiler is invoked to process a source file, a copy of that file is made, and all relevant information about the source code is collected. This includes syntactic data about the abstract syntax tree and semantic data about name binding and type information, which we'll cover in greater detail shortly.
 
 #### Extraction for Non-Compiled Languages
 
-For non-compiled languages, the extractor runs directly on the source code, resolving dependencies to give an accurate representation of the codebase.
+- For non-compiled languages, the extractor runs directly on the source code, resolving dependencies to give an accurate representation of the codebase.
 
 In both scenarios, a parse tree is ultimately created to represent the source code, and this tree is then transformed into a relational database to run queries against. What exactly does that mean, though? Let's use an example from the [GitHub Blog](https://github.blog/2022-02-01-code-scanning-and-ruby-turning-source-code-into-a-queryable-database/).
 
