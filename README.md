@@ -25,7 +25,7 @@ The most basic explanation you'll find regarding this step is that to create a d
 
 The conversion from source code to a queryable database is done by a special program called an extractor, and to perform this process on any given language, an extractor built specifically for that language is needed. As I'll explain later, the ambiguities present in certain programming languages (such as Ruby) make it harder to write extractors, as one of the key functions of an extractor is to _parse_ the code, which is more difficult for more ambiguous languages.
 
-Beyond which language is being used, there are two different scenarios for the extraction process, both covered below:
+Beyond which language is being used, there are two different scenarios for the extraction process, both covered below (and in [this](https://codeql.github.com/docs/codeql-overview/about-codeql/) documentation):
 
 #### Extraction for Compiled Languages
 
