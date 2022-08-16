@@ -131,7 +131,7 @@ You can read more about writing queries for Ruby in CodeQL [here](https://codeql
 
 #### But what queries will return potential vulnerabilities in our code?
 
-Whether we're talking about CodeQL or some other vendor's solution, this is the question at the heart of code scanning. In addition to custom queries that you can write yourself to find vulnerabilities, there are different packs of pre-written queries created by the [GitHub Security Lab](https://securitylab.github.com/) that you can run. When you follow the setup for the CodeQL automated workflow (discussed at the start of this post), default queries are used for whatever languages it detects in your code, and these defaults are specifically chosen for their hit rate on high severity alerts.
+Whether we're talking about CodeQL or some other vendor's solution, this is the question at the heart of code scanning. In addition to custom queries that you can write yourself to find vulnerabilities, there are different packs of pre-written queries created by the CodeQL language teams (and augmented with additional queries from our Field Services or [GitHub Security Lab](https://securitylab.github.com/) Teams) that you can run. When you follow the setup for the CodeQL automated workflow (discussed at the start of this post), default queries are used for whatever languages it detects in your code, and these defaults are specifically chosen for their hit rate on high severity alerts.
 
 Though it might be a little out of date depending on when you're reading this, you can find the default queries by looking at this repo:
 https://github.com/advanced-security/codeql-queries/ and going in the directory for whatever language you want to see. Check out the corresponding README for more information. It lists how many queries are under the different packs/suites, and you can find the specific queries called for each in the json file ```queries.json```, which references them in the main CodeQL repo, here: https://github.com/github/codeql (again, look under the corresponding language directories).
@@ -146,7 +146,7 @@ The majority of the queries in these main packs/suites are built to check for ma
 2. Stored XSS (or Persistent)
 3. DOM-Based XSS
 
-If you look at the [default CodeQL queries for Ruby](https://github.com/advanced-security/codeql-queries/blob/main/ruby/queries.json), you'll see both **1.** and **2.** are checked for (**3.** is really only a js vulnerability, so you won't find it in the Ruby default queries, though you will in the js ones). You can then find these actual queries in the https://github.com/github/codeq1 repo, [here](https://github.com/github/codeql/tree/main/ruby/ql/src/queries/security/cwe-079).
+If you look at the [default CodeQL queries for Ruby](https://github.com/advanced-security/codeql-queries/blob/main/ruby/queries.json), you'll see both **1.** and **2.** are checked for (**3.** is really only a js vulnerability, so you won't find it in the Ruby default queries, though you will in the js ones). You can then find these actual queries in the https://github.com/github/codeql repo, [here](https://github.com/github/codeql/tree/main/ruby/ql/src/queries/security/cwe-079).
 
 Notice that each query has two corresponding files: 
 
